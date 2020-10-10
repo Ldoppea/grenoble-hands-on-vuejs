@@ -2,11 +2,24 @@
   <h1 class="title">Cities weather</h1>
   <article class="panel is-primary">
     <div class="panel-heading"><h2>{{cityName}}</h2></div>
-    <div class="panel-block">Weather: {{ weather?.weather }}</div>
-    <div class="panel-block">Max: {{ weather?.temp2m.max }}</div>
-    <div class="panel-block">Min: {{ weather?.temp2m.min }}</div>
     <div class="panel-block">
       <l-map :zoom="13" :lat="cityLatitude" :long="cityLongitude"/>
+    </div>
+    <div class="panel-block">
+      <table class="table">
+        <tr>
+          <th>Day</th>
+          <th>Weather</th>
+          <th>Max</th>
+          <th>Min</th>
+        </tr>
+        <tr v-for="weatherPerDay of weather" :key="weatherPerDay">
+          <td>{{weatherPerDay?.date}}</td>
+          <td>{{weatherPerDay?.weather}}</td>
+          <td>{{weatherPerDay?.temp2m.max}}</td>
+          <td>{{weatherPerDay?.temp2m.min}}</td>
+        </tr>
+      </table>
     </div>
     <div class="panel-block">
       <router-link to="/" class="button is-rounded">
@@ -40,7 +53,7 @@ export default {
     cityLongitude() { return this.$store.getters.getCityPosition(this.cityName)[1] }
   },
   created() {
-    API.getCityTodayWeather(this.cityLongitude, this.cityLatitude).then(res => this.weather = res)
+    API.getCityNextWeekWeather(this.cityLongitude, this.cityLatitude).then(res => this.weather = res)
   }
 }
 </script>
