@@ -1,7 +1,7 @@
 <template>
   <h1 class="title">Cities weather</h1>
   <article class="panel is-primary">
-    <div class="panel-heading"><h2>GRENOBLE</h2></div>
+    <div class="panel-heading"><h2>{{cityName}}</h2></div>
     <div class="panel-block">Weather: {{ weather?.weather }}</div>
     <div class="panel-block">Max: {{ weather?.temp2m.max }}</div>
     <div class="panel-block">Min: {{ weather?.temp2m.min }}</div>
@@ -32,10 +32,12 @@ export default {
   },
   data() {
     return {
-      cityLatitude: 45.183916,
-      cityLongitude: 5.703630,
       weather: null
     }
+  },
+  computed: {
+    cityLatitude() { return this.$store.getters.getCityPosition(this.cityName)[0] },
+    cityLongitude() { return this.$store.getters.getCityPosition(this.cityName)[1] }
   },
   created() {
     API.getCityTodayWeather(this.cityLongitude, this.cityLatitude).then(res => this.weather = res)
