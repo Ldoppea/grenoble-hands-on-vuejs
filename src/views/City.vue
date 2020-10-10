@@ -6,6 +6,18 @@
       <l-map :zoom="13" :lat="cityLatitude" :long="cityLongitude"/>
     </div>
     <div class="panel-block">
+      <div class="control">
+        <label class="radio">
+          <input type="radio" name="degree" value="C" v-model="degree">
+          C°
+        </label>
+        <label class="radio">
+          <input type="radio" name="degree" value="F" v-model="degree">
+          F°
+        </label>
+      </div>
+    </div>
+    <div class="panel-block">
       <table class="table">
         <tr>
           <th>Day</th>
@@ -16,8 +28,8 @@
         <tr v-for="weatherPerDay of weather" :key="weatherPerDay">
           <td>{{weatherPerDay?.date}}</td>
           <td>{{weatherPerDay?.weather}}</td>
-          <td>{{weatherPerDay?.temp2m.max}}</td>
-          <td>{{weatherPerDay?.temp2m.min}}</td>
+          <td>{{displayInDegree(weatherPerDay?.temp2m.max)}} {{degree}}°</td>
+          <td>{{displayInDegree(weatherPerDay?.temp2m.min)}} {{degree}}°</td>
         </tr>
       </table>
     </div>
@@ -45,7 +57,13 @@ export default {
   },
   data() {
     return {
+      degree: 'C',
       weather: null
+    }
+  },
+  methods: {
+    displayInDegree(temperature) {
+      return this.degree === 'C' ? temperature :  temperature * (9/5) + 32
     }
   },
   computed: {
