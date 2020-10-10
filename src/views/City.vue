@@ -27,7 +27,7 @@
         </tr>
         <tr v-for="weatherPerDay of weather" :key="weatherPerDay">
           <td>{{weatherPerDay?.date}}</td>
-          <td>{{weatherPerDay?.weather}}</td>
+          <td><img :src="'http://www.7timer.info/img/misc/about_civil_'+weatherPerDay.weather+'.png'" alt=""></td>
           <td>{{displayInDegree(weatherPerDay?.temp2m.max)}} {{degree}}°</td>
           <td>{{displayInDegree(weatherPerDay?.temp2m.min)}} {{degree}}°</td>
         </tr>
