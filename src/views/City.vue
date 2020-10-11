@@ -16,8 +16,18 @@
           F°
         </label>
       </div>
+      <div class="control">
+        <label class="radio">
+          <input type="radio" name="mode" value="simple" v-model="mode">
+          Simple
+        </label>
+        <label class="radio">
+          <input type="radio" name="mode" value="detailed" v-model="mode">
+          Detailed
+        </label>
+      </div>
     </div>
-    <div class="panel-block">
+    <div class="panel-block" v-if="mode === 'simple'">
       <table class="table">
         <tr>
           <th>Day</th>
@@ -26,10 +36,24 @@
           <th>Min</th>
         </tr>
         <tr v-for="weatherPerDay of weather" :key="weatherPerDay">
-          <td>{{weatherPerDay?.date}}</td>
+          <td>{{displayDate(weatherPerDay?.date)}}</td>
           <td><img :src="'http://www.7timer.info/img/misc/about_civil_'+weatherPerDay.weather+'.png'" alt=""></td>
           <td>{{displayInDegree(weatherPerDay?.temp2m.max)}} {{degree}}°</td>
           <td>{{displayInDegree(weatherPerDay?.temp2m.min)}} {{degree}}°</td>
+        </tr>
+      </table>
+    </div>
+    <div class="panel-block" v-if="mode === 'detailed'">
+      <table class="table">
+        <tr>
+          <th>Time</th>
+          <th>Weather</th>
+          <th>Temperature</th>
+        </tr>
+        <tr v-for="weatherPerDay of detailedWeather" :key="weatherPerDay">
+          <td>{{displayHour(weatherPerDay?.timepoint)}}</td>
+          <td>{{weatherPerDay.weather}}</td>
+          <td>{{displayInDegree(weatherPerDay?.temp2m)}} {{degree}}°</td>
         </tr>
       </table>
     </div>
@@ -41,6 +65,8 @@
   </article>
 </template>
 <script>
+import { setMinutes, add,  format, parse } from 'date-fns'
+
 import API from "@/api/weather.api";
 import LMap from "@/components/LMap";
 
@@ -58,12 +84,20 @@ export default {
   data() {
     return {
       degree: 'C',
-      weather: null
+      mode: 'simple',
+      weather: null,
+      detailedWeather: null,
     }
   },
   methods: {
     displayInDegree(temperature) {
       return this.degree === 'C' ? temperature :  temperature * (9/5) + 32
+    },
+    displayHour(time) {
+      return format(setMinutes(add(new Date(), {hours: time + 1 - 3}), 0), 'dd/MM/yyyy HH:mm')
+    },
+    displayDate(date) {
+      return format(parse(date, 'yyyyMMdd', new Date()), 'dd/MM/yyyy')
     }
   },
   computed: {
@@ -72,6 +106,7 @@ export default {
   },
   created() {
     API.getCityNextWeekWeather(this.cityLongitude, this.cityLatitude).then(res => this.weather = res)
+    API.getCityDetailedWeather(this.cityLongitude, this.cityLatitude).then(res => this.detailedWeather = res)
   }
 }
 </script>
